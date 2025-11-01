@@ -2,6 +2,10 @@
 
 > **✅ Verified Working**: This approach has been tested and confirmed working as of **November 1st, 2025**. All requirements documented here are based on empirical testing against Anthropic's production API.
 
+> **⚠️ EDUCATIONAL AND ENTERTAINMENT PURPOSES ONLY**
+>
+> This guide is provided for educational, research, and entertainment purposes only. It is not affiliated with, endorsed by, or sponsored by Anthropic PBC. Implementation and use of the techniques described herein is at your own risk. The authors and contributors make no warranties and accept no liability for any damages or issues arising from use of this information. Users are solely responsible for ensuring their use complies with Anthropic's Terms of Service and all applicable laws. This information is provided "as-is" without any express or implied warranties.
+
 ## Overview
 
 This guide explains how to use Anthropic's OAuth tokens from a Claude MAX subscription ($200/month) to access premium models (Sonnet 4.5, Opus) with **flat-rate billing** instead of pay-per-token API charges.

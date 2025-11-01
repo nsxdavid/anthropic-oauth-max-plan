@@ -2,6 +2,10 @@
 
 > **✅ Verified Working**: Tested and confirmed as of November 1st, 2025
 
+> **⚠️ EDUCATIONAL AND ENTERTAINMENT PURPOSES ONLY**
+>
+> This project is provided for educational, research, and entertainment purposes only. It is not affiliated with, endorsed by, or sponsored by Anthropic PBC. Use of this software is at your own risk. The authors and contributors make no warranties and accept no liability for any damages or issues arising from use of this code. Users are responsible for ensuring their use complies with Anthropic's Terms of Service and all applicable laws. This software is provided "as-is" without any express or implied warranties.
+
 A complete TypeScript proof-of-concept demonstrating how to use Anthropic's Claude MAX subscription ($200/month) for **flat-rate billing** instead of pay-per-token API charges.
 
 ## What This Does
