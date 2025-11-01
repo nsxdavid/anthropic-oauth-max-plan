@@ -141,35 +141,35 @@ export async function startOAuthFlow(): Promise<{ code: string; verifier: string
   console.log('Please visit this URL to authorize:\n');
   console.log(authUrl);
   console.log('\n' + '='.repeat(70));
-  console.log('After authorizing, you will be redirected to a page.');
-  console.log('Copy the ENTIRE URL from your browser address bar.');
-  console.log('It will look like: https://console.anthropic.com/oauth/code/callback?code=...&state=...');
+  console.log('After authorizing, the page will show a code and state.');
+  console.log('Copy them and paste in this format: code#state');
+  console.log('Example: abc123xyz...#def456uvw...');
   console.log('='.repeat(70) + '\n');
 
-  // Import readline dynamically
+  // Import readline dynamically with paste bracketing disabled
   const readline = await import('readline');
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
+    terminal: false  // Disable terminal-specific features to avoid paste doubling
   });
 
   return new Promise((resolve, reject) => {
-    rl.question('Paste the redirect URL here: ', (input) => {
+    rl.question('Paste code#state here: ', (input) => {
       rl.close();
 
       try {
-        const url = new URL(input.trim());
-        const code = url.searchParams.get('code');
-        const returnedState = url.searchParams.get('state');
-        const error = url.searchParams.get('error');
+        const trimmed = input.trim();
 
-        if (error) {
-          reject(new Error(`Authorization failed: ${error}`));
+        if (!trimmed || !trimmed.includes('#')) {
+          reject(new Error('Invalid format. Expected: code#state'));
           return;
         }
 
-        if (!code) {
-          reject(new Error('No authorization code found in URL'));
+        const [code, returnedState] = trimmed.split('#');
+
+        if (!code || !returnedState) {
+          reject(new Error('Missing code or state'));
           return;
         }
 
@@ -182,7 +182,7 @@ export async function startOAuthFlow(): Promise<{ code: string; verifier: string
         console.log('\n✅ Authorization code received!\n');
         resolve({ code, verifier });
       } catch (err) {
-        reject(new Error(`Invalid URL format: ${err}`));
+        reject(new Error(`Invalid format: ${err}`));
       }
     });
   });
