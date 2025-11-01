@@ -78,22 +78,14 @@ export async function exchangeCodeForTokens(
     code_verifier: codeVerifier
   });
 
-  // Debug logging
-  console.log('Token exchange request:');
-  console.log(`URL: ${OAUTH_CONFIG.token_url}`);
-  console.log(`Body: ${params.toString()}`);
-
   const response = await fetch(OAUTH_CONFIG.token_url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: params.toString()
   });
 
-  console.log(`Response status: ${response.status}`);
-
   if (!response.ok) {
     const error = await response.text();
-    console.log(`Response body: ${error}`);
     throw new Error(`Token exchange failed: ${error}`);
   }
 

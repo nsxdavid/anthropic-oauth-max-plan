@@ -44,8 +44,8 @@ const OAUTH_CONFIG = {
   client_id: '9d1c250a-e61b-44d9-88ed-5944d1962f5e',
   authorize_url: 'https://claude.ai/oauth/authorize',  // MAX mode
   token_url: 'https://console.anthropic.com/v1/oauth/token',
-  redirect_uri: 'http://localhost:8000/callback',
-  scope: 'user:inference user:profile'  // MAX mode scopes
+  redirect_uri: 'https://console.anthropic.com/oauth/code/callback',
+  scope: 'org:create_api_key user:profile user:inference'  // MAX mode scopes
 };
 ```
 
@@ -65,6 +65,7 @@ const state = crypto.randomBytes(32).toString('base64url');
 
 // 3. Build authorization URL
 const authUrl = new URL('https://claude.ai/oauth/authorize');
+authUrl.searchParams.set('code', 'true');  // Tell it to return code
 authUrl.searchParams.set('client_id', OAUTH_CONFIG.client_id);
 authUrl.searchParams.set('redirect_uri', OAUTH_CONFIG.redirect_uri);
 authUrl.searchParams.set('response_type', 'code');
@@ -73,7 +74,10 @@ authUrl.searchParams.set('code_challenge', code_challenge);
 authUrl.searchParams.set('code_challenge_method', 'S256');
 authUrl.searchParams.set('state', state);  // Required for CSRF protection
 
-// 4. User visits authUrl and authorizes, receives code and state in callback
+// 4. User visits authUrl and authorizes
+// After authorization, user is redirected to:
+// https://console.anthropic.com/oauth/code/callback?code=...&state=...
+// User copies the full URL and pastes it back to your application
 // IMPORTANT: Verify returned state matches the generated state before proceeding
 
 // 5. Exchange code for tokens
