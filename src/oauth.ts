@@ -148,51 +148,37 @@ export async function startOAuthFlow(): Promise<{ code: string; verifier: string
   console.log('Example: abc123xyz...#def456uvw...');
   console.log('='.repeat(70) + '\n');
 
+  const readline = require('readline');
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
   return new Promise((resolve, reject) => {
-    // Disable bracketed paste mode to prevent character doubling
-    process.stdout.write('\x1b[?2004l');
-
-    const readline = require('readline');
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-
     rl.question('Paste code#state here: ', (input) => {
       rl.close();
 
-      // Re-enable bracketed paste mode
-      process.stdout.write('\x1b[?2004h');
+      const trimmed = input.trim();
 
-      try {
-        let trimmed = input.trim();
-
-        // Strip bracketed paste escape sequences if present
-        trimmed = trimmed.replace(/\x1b\[200~|\x1b\[201~/g, '');
-
-        if (!trimmed || !trimmed.includes('#')) {
-          reject(new Error('Invalid format. Expected: code#state'));
-          return;
-        }
-
-        const [code, returnedState] = trimmed.split('#');
-
-        if (!code || !returnedState) {
-          reject(new Error('Missing code or state'));
-          return;
-        }
-
-        // Verify state to prevent CSRF attacks
-        if (returnedState !== state) {
-          reject(new Error('State mismatch - possible CSRF attack'));
-          return;
-        }
-
-        console.log('\n✅ Authorization code received!\n');
-        resolve({ code, verifier, state: returnedState });
-      } catch (err) {
-        reject(new Error(`Invalid format: ${err}`));
+      if (!trimmed || !trimmed.includes('#')) {
+        reject(new Error('Invalid format. Expected: code#state'));
+        return;
       }
+
+      const [code, returnedState] = trimmed.split('#');
+
+      if (!code || !returnedState) {
+        reject(new Error('Missing code or state'));
+        return;
+      }
+
+      if (returnedState !== state) {
+        reject(new Error('State mismatch - possible CSRF attack'));
+        return;
+      }
+
+      console.log('\n✅ Authorization code received!\n');
+      resolve({ code, verifier, state: returnedState });
     });
   });
 }
