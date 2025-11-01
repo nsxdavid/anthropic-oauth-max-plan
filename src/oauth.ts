@@ -40,9 +40,16 @@ export function generatePKCE(): { verifier: string; challenge: string } {
 }
 
 /**
+ * Generate random state for CSRF protection
+ */
+export function generateState(): string {
+  return crypto.randomBytes(32).toString('base64url');
+}
+
+/**
  * Build authorization URL for OAuth flow
  */
-export function getAuthorizationUrl(codeChallenge: string): string {
+export function getAuthorizationUrl(codeChallenge: string, state: string): string {
   const url = new URL(OAUTH_CONFIG.authorize_url);
   url.searchParams.set('client_id', OAUTH_CONFIG.client_id);
   url.searchParams.set('redirect_uri', OAUTH_CONFIG.redirect_uri);
@@ -50,6 +57,7 @@ export function getAuthorizationUrl(codeChallenge: string): string {
   url.searchParams.set('scope', OAUTH_CONFIG.scope);
   url.searchParams.set('code_challenge', codeChallenge);
   url.searchParams.set('code_challenge_method', 'S256');
+  url.searchParams.set('state', state);
 
   return url.toString();
 }
@@ -121,7 +129,8 @@ export async function refreshAccessToken(refreshToken: string): Promise<OAuthTok
 export function startOAuthFlow(): Promise<{ code: string; verifier: string }> {
   return new Promise((resolve, reject) => {
     const { verifier, challenge } = generatePKCE();
-    const authUrl = getAuthorizationUrl(challenge);
+    const state = generateState();
+    const authUrl = getAuthorizationUrl(challenge, state);
 
     console.log('\n🔐 Starting OAuth flow...\n');
     console.log('Please visit this URL to authorize:\n');
@@ -133,6 +142,7 @@ export function startOAuthFlow(): Promise<{ code: string; verifier: string }> {
 
       if (url.pathname === '/callback') {
         const code = url.searchParams.get('code');
+        const returnedState = url.searchParams.get('state');
         const error = url.searchParams.get('error');
 
         if (error) {
@@ -140,6 +150,15 @@ export function startOAuthFlow(): Promise<{ code: string; verifier: string }> {
           res.end(`<h1>Authorization failed</h1><p>Error: ${error}</p>`);
           server.close();
           reject(new Error(`Authorization failed: ${error}`));
+          return;
+        }
+
+        // Verify state to prevent CSRF attacks
+        if (returnedState !== state) {
+          res.writeHead(400, { 'Content-Type': 'text/html' });
+          res.end('<h1>State mismatch - possible CSRF attack</h1>');
+          server.close();
+          reject(new Error('State mismatch - possible CSRF attack'));
           return;
         }
 
