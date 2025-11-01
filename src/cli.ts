@@ -71,11 +71,11 @@ async function handleAuthenticate() {
   console.log('Your browser will open to authorize this application.\n');
 
   try {
-    const { code, verifier } = await startOAuthFlow();
+    const { code, verifier, state } = await startOAuthFlow();
     console.log('\n✅ Authorization received');
     console.log('🔄 Exchanging for tokens...\n');
 
-    const tokens = await exchangeCodeForTokens(code, verifier);
+    const tokens = await exchangeCodeForTokens(code, verifier, state);
     await saveTokens(tokens);
 
     console.log('✅ Authentication successful!\n');
