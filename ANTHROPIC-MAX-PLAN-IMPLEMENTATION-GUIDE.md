@@ -77,16 +77,19 @@ authUrl.searchParams.set('state', state);  // Required for CSRF protection
 // IMPORTANT: Verify returned state matches the generated state before proceeding
 
 // 5. Exchange code for tokens
+// IMPORTANT: OAuth 2.0 spec (RFC 6749) requires application/x-www-form-urlencoded
+const params = new URLSearchParams({
+  grant_type: 'authorization_code',
+  client_id: OAUTH_CONFIG.client_id,
+  code: authorization_code,
+  redirect_uri: OAUTH_CONFIG.redirect_uri,
+  code_verifier: code_verifier
+});
+
 const tokenResponse = await fetch('https://console.anthropic.com/v1/oauth/token', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    grant_type: 'authorization_code',
-    client_id: OAUTH_CONFIG.client_id,
-    code: authorization_code,
-    redirect_uri: OAUTH_CONFIG.redirect_uri,
-    code_verifier: code_verifier
-  })
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: params.toString()
 });
 
 const tokens = await tokenResponse.json();
