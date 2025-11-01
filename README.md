@@ -354,6 +354,12 @@ See [`ANTHROPIC-MAX-PLAN-IMPLEMENTATION-GUIDE.md`](./ANTHROPIC-MAX-PLAN-IMPLEMEN
 - Router/proxy implementation patterns
 - Security considerations
 
+## Author
+
+**nsxdavid (David Whatley)**
+- Website: [davidwhatley.com](https://davidwhatley.com)
+- GitHub: [@nsxdavid](https://github.com/nsxdavid)
+
 ## License
 
 MIT

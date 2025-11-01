@@ -22,7 +22,7 @@
     "ai",
     "coding-assistant"
   ],
-  "author": "",
+  "author": "nsxdavid (David Whatley) <https://davidwhatley.com>",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.4.5",
