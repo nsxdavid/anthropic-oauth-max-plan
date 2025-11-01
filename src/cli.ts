@@ -122,34 +122,49 @@ async function handleRefreshToken() {
 
 async function handleSendMessage() {
   console.log('\n' + '='.repeat(70));
-  console.log('SEND CHAT MESSAGE');
+  console.log('CHAT MODE - Type /exit to return to menu');
   console.log('='.repeat(70));
 
   try {
     // Get valid token (auto-refreshes if needed)
     const accessToken = await getValidAccessToken();
 
-    console.log('\nEnter your message (or press ENTER for a test message):');
-    const input = await question('> ');
+    while (true) {
+      console.log('\nYour message (or /exit to quit):');
+      const input = await question('> ');
 
-    const message = input.trim() || 'Say hello and confirm you are Claude Code!';
+      const trimmed = input.trim();
 
-    console.log(`\n📤 Sending: "${message}"\n`);
-    console.log('⏳ Waiting for response...\n');
+      // Check for exit commands
+      if (trimmed === '/exit' || trimmed === '/quit' || trimmed === '/q') {
+        console.log('\n👋 Exiting chat mode...\n');
+        break;
+      }
 
-    const response = await sendMessage(accessToken, message, {
-      model: 'claude-sonnet-4-5',
-      maxTokens: 500
-    });
+      // Skip empty messages
+      if (!trimmed) {
+        continue;
+      }
 
-    console.log('='.repeat(70));
-    console.log('📥 RESPONSE:');
-    console.log('='.repeat(70));
-    console.log(response);
-    console.log('='.repeat(70));
-    console.log('\n✅ Success! (Flat-rate billing - no per-token charges)\n');
+      console.log('\n⏳ Sending...\n');
 
-    await question('Press ENTER to continue...');
+      try {
+        const response = await sendMessage(accessToken, trimmed, {
+          model: 'claude-sonnet-4-5',
+          maxTokens: 1000
+        });
+
+        console.log('='.repeat(70));
+        console.log('📥 RESPONSE:');
+        console.log('='.repeat(70));
+        console.log(response);
+        console.log('='.repeat(70));
+        console.log('');
+      } catch (msgError) {
+        console.error('❌ Error sending message:', msgError instanceof Error ? msgError.message : msgError);
+        console.log('');
+      }
+    }
 
   } catch (error) {
     console.error('\n❌ Error:', error instanceof Error ? error.message : error);
@@ -160,8 +175,6 @@ async function handleSendMessage() {
     } else if (error instanceof Error && error.message.includes('expired')) {
       console.log('Token expired. Try option 2 to refresh, or option 1 to re-authenticate.\n');
     }
-
-    await question('Press ENTER to continue...');
   }
 }
 
