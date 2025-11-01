@@ -148,36 +148,27 @@ export async function startOAuthFlow(): Promise<{ code: string; verifier: string
   console.log('Example: abc123xyz...#def456uvw...');
   console.log('='.repeat(70) + '\n');
 
-  // Import readline dynamically
-  const readline = await import('readline');
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-
   return new Promise((resolve, reject) => {
+    // Disable bracketed paste mode to prevent character doubling
+    process.stdout.write('\x1b[?2004l');
+
+    const readline = require('readline');
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
     rl.question('Paste code#state here: ', (input) => {
       rl.close();
+
+      // Re-enable bracketed paste mode
+      process.stdout.write('\x1b[?2004h');
 
       try {
         let trimmed = input.trim();
 
-        // Fix paste bracketing bug that doubles characters
-        // Check if characters are doubled (e.g., "aabbcc" instead of "abc")
-        if (trimmed.length > 0 && trimmed.length % 2 === 0) {
-          const isDoubled = trimmed.split('').every((char, i) => {
-            if (i % 2 === 0) {
-              return char === trimmed[i + 1];
-            }
-            return true;
-          });
-
-          if (isDoubled) {
-            // Remove every other character
-            trimmed = trimmed.split('').filter((_, i) => i % 2 === 0).join('');
-            console.log('Fixed paste doubling bug');
-          }
-        }
+        // Strip bracketed paste escape sequences if present
+        trimmed = trimmed.replace(/\x1b\[200~|\x1b\[201~/g, '');
 
         if (!trimmed || !trimmed.includes('#')) {
           reject(new Error('Invalid format. Expected: code#state'));
