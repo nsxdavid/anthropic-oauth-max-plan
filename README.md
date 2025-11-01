@@ -40,38 +40,27 @@ npm install
 npm run cli
 ```
 
-The interactive CLI provides a simple menu-driven interface:
+The interactive CLI provides a simple menu-driven interface.
 
+**Authentication Process:**
+1. Run `npm run cli` and select option 1
+2. Visit the authorization URL in your browser
+3. Authorize the application with your MAX plan account
+4. Copy the full redirect URL from your browser
+5. Paste it back into the CLI
+
+The redirect URL will look like:
 ```
-╔═══════════════════════════════════════════════════════════════════╗
-║   Anthropic MAX Plan OAuth - Interactive CLI                     ║
-║   Educational & Entertainment Purposes Only                       ║
-╚═══════════════════════════════════════════════════════════════════╝
-
-AUTHENTICATION STATUS
-======================================================================
-❌ Not authenticated
-   Use option 1 to authenticate
-
-======================================================================
-ANTHROPIC MAX PLAN OAUTH - INTERACTIVE CLI
-======================================================================
-
-Options:
-  1. Authenticate with Anthropic MAX Plan
-  2. Refresh Token
-  3. Send Chat Message
-  4. Exit
-
-Select option (1-4):
+https://console.anthropic.com/oauth/code/callback?code=...&state=...
 ```
 
 **Features:**
 - ✅ Shows current authentication status on startup
 - ✅ Interactive menu with clear options
-- ✅ Option 1: Authenticate (opens browser for OAuth)
+- ✅ Option 1: Authenticate (manual code copy from browser)
 - ✅ Option 2: Refresh token when needed
 - ✅ Option 3: Send messages (press ENTER for test message)
+- ✅ Option 4: Logout (delete stored tokens)
 - ✅ Automatic error handling and guidance
 - ✅ Returns to menu after each action
 
