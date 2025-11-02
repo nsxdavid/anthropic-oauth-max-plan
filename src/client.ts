@@ -35,24 +35,6 @@ const REQUIRED_SYSTEM_PROMPT: SystemMessage = {
 };
 
 /**
- * Default tool to satisfy OAuth requirements
- */
-const DEFAULT_TOOL: Tool = {
-  name: 'bash',
-  description: 'Execute bash commands',
-  input_schema: {
-    type: 'object',
-    properties: {
-      command: {
-        type: 'string',
-        description: 'The command to run'
-      }
-    },
-    required: ['command']
-  }
-};
-
-/**
  * Make a request to Anthropic API with OAuth token
  */
 export async function makeAnthropicRequest(
@@ -66,17 +48,10 @@ export async function makeAnthropicRequest(
     ...system
   ];
 
-  // Ensure at least one tool is provided
-  const tools = request.tools && request.tools.length > 0
-    ? request.tools
-    : [DEFAULT_TOOL];
-
   // Build the request body
   const body: AnthropicRequest = {
     ...request,
-    system: systemWithRequired,
-    tools,
-    tool_choice: request.tool_choice || { type: 'auto' }
+    system: systemWithRequired
   };
 
   const response = await fetch(API_URL, {
@@ -161,9 +136,7 @@ export async function testMaxPlanValidation(accessToken: string): Promise<{
         role: 'user',
         content: 'Hello'
       }
-    ],
-    tools: [DEFAULT_TOOL],
-    tool_choice: { type: 'auto' }
+    ]
   };
 
   try {
@@ -201,3 +174,4 @@ export async function testMaxPlanValidation(accessToken: string): Promise<{
     };
   }
 }
+

@@ -134,6 +134,8 @@ async function refreshAccessToken(refresh_token) {
 
 For Anthropic to accept your OAuth request for premium models, your request **MUST** include:
 
+**UPDATE (Verified November 2, 2025)**: Previous versions of this guide incorrectly stated that tools were required. **Tools are NOT required** - only the system prompt is mandatory.
+
 #### 1. Required HTTP Headers
 
 ```javascript
@@ -223,36 +225,6 @@ const headers = {
 - ❌ Shortened versions or paraphrasing
 - ❌ Phrase as second element in system array
 
-#### 3. Tools Array
-
-Must include at least one tool definition:
-
-```javascript
-{
-  "tools": [
-    {
-      "name": "bash",
-      "description": "Execute bash commands",
-      "input_schema": {
-        "type": "object",
-        "properties": {
-          "command": {
-            "type": "string",
-            "description": "The command to run"
-          }
-        },
-        "required": ["command"]
-      }
-    }
-  ],
-  "tool_choice": { "type": "auto" }
-}
-```
-
-**Why**: Proves this is a tool-using agent, not just a chat application.
-
-You can include any tools relevant to your application (file operations, web search, etc.). The tool doesn't have to be used, just declared.
-
 ### Complete Request Example
 
 ```javascript
@@ -278,36 +250,9 @@ async function callClaude(accessToken, userMessage) {
         role: 'user',
         content: userMessage
       }
-    ],
+    ]
 
-    // REQUIRED: At least one tool
-    tools: [
-      {
-        name: 'bash',
-        description: 'Execute bash commands',
-        input_schema: {
-          type: 'object',
-          properties: {
-            command: { type: 'string', description: 'The command to run' }
-          },
-          required: ['command']
-        }
-      },
-      {
-        name: 'read_file',
-        description: 'Read file contents',
-        input_schema: {
-          type: 'object',
-          properties: {
-            file_path: { type: 'string', description: 'Path to file' }
-          },
-          required: ['file_path']
-        }
-      }
-    ],
-
-    // REQUIRED: Tool choice
-    tool_choice: { type: 'auto' }
+    // Tools are optional - include them if your application needs them
   };
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -365,24 +310,9 @@ app.post('/v1/messages', async (req, res) => {
     // Pass through messages
     messages: req.body.messages,
 
-    // Add required tools (merge with user's tools if provided)
-    tools: [
-      {
-        name: 'bash',
-        description: 'Execute bash commands',
-        input_schema: {
-          type: 'object',
-          properties: {
-            command: { type: 'string' }
-          },
-          required: ['command']
-        }
-      },
-      ...(req.body.tools || [])
-    ],
-
-    // Required tool choice
-    tool_choice: req.body.tool_choice || { type: 'auto' }
+    // Pass through tools if provided (optional)
+    ...(req.body.tools && { tools: req.body.tools }),
+    ...(req.body.tool_choice && { tool_choice: req.body.tool_choice })
   };
 
   // 3. Forward to Anthropic
@@ -489,13 +419,11 @@ async function getValidAccessToken() {
    - ❌ Cannot have any content before this phrase
    - ❌ Cannot use lowercase or variations
 
-2. **Tools array**:
-   - ✅ Include at least one tool definition
-   - ✅ Add `tool_choice` parameter (typically `{ type: 'auto' }`)
-
-3. **Headers**:
+2. **Headers**:
    - ✅ Include `anthropic-beta: oauth-2025-04-20,...` header
    - ✅ Use `Authorization: Bearer {oauth_token}` header
+
+**Note**: Tools are NOT required (verified November 2, 2025)
 
 **Common mistakes** (verified to fail):
 - Phrase appears after other system content
@@ -549,7 +477,7 @@ Even with flat-rate billing, implement:
 
 ## Complete Working Example
 
-See `test-with-tools.js` for a minimal working implementation:
+Minimal working implementation:
 
 ```javascript
 #!/usr/bin/env node
@@ -570,19 +498,7 @@ const body = JSON.stringify({
       text: 'You are Claude Code, Anthropic\'s official CLI for Claude.'
     }
   ],
-  messages: [{ role: 'user', content: 'Say hello' }],
-  tools: [{
-    name: 'bash',
-    description: 'Execute bash commands',
-    input_schema: {
-      type: 'object',
-      properties: {
-        command: { type: 'string', description: 'The command to run' }
-      },
-      required: ['command']
-    }
-  }],
-  tool_choice: { type: 'auto' }
+  messages: [{ role: 'user', content: 'Say hello' }]
 });
 
 const options = {
@@ -617,11 +533,11 @@ req.end();
 
 1. **OAuth Token** from Claude MAX subscription
 2. **System Prompt** with exact phrase "You are Claude Code, Anthropic's official CLI for Claude." as FIRST element
-3. **Tools Array** with at least one tool definition
-4. **tool_choice** parameter (usually `{ type: 'auto' }`)
-5. **Headers** including anthropic-beta with oauth-2025-04-20
+3. **Headers** including anthropic-beta with oauth-2025-04-20
 
 **Critical**: System prompt must be first element, exact capitalization, exact punctuation (see Appendix for test results)
+
+**Note**: Tools are NOT required (this was verified November 2, 2025)
 
 ### What This Enables
 
@@ -635,9 +551,8 @@ req.end();
 
 1. Build proxy server that transforms requests
 2. Add required Claude Code system prompt
-3. Inject tools array if not present
-4. Manage OAuth token lifecycle
-5. Forward to Anthropic with OAuth bearer token
+3. Manage OAuth token lifecycle
+4. Forward to Anthropic with OAuth bearer token
 
 This approach allows any AI application to use Claude MAX plan flat-rate billing by properly formatting requests to appear as a legitimate coding assistant tool.
 
@@ -645,7 +560,7 @@ This approach allows any AI application to use Claude MAX plan flat-rate billing
 
 ## Appendix: System Prompt Validation Test Results
 
-The following tests were conducted to determine the exact requirements for the system prompt. All tests used the same OAuth token, headers, tools array, and model (claude-sonnet-4-5). Only the system prompt was varied.
+The following tests were conducted to determine the exact requirements for the system prompt. All tests used the same OAuth token, headers, and model (claude-sonnet-4-5). Only the system prompt was varied.
 
 ### Test Results Summary
 
