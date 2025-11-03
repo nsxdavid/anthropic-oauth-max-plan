@@ -1,17 +1,27 @@
 {
   "name": "anthropic-max-router",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "HTTP proxy router for using Anthropic MAX Plan (flat-rate billing) with any AI tool",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "anthropic-max-router": "./src/router/server.ts",
-    "max-router": "./src/router/server.ts"
+    "anthropic-max-router": "./dist/router/server.js",
+    "max-router": "./dist/router/server.js"
   },
   "scripts": {
     "start": "tsx src/cli.ts",
-    "router": "tsx src/router/server.ts"
+    "router": "tsx src/router/server.ts",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "ANTHROPIC-MAX-PLAN-IMPLEMENTATION-GUIDE.md",
+    "assets"
+  ],
   "keywords": [
     "anthropic",
     "claude",
