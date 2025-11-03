@@ -1,9 +1,13 @@
 {
-  "name": "anthropic-oauth-max-plan",
+  "name": "anthropic-max-router",
   "version": "1.1.0",
-  "description": "Proof of concept for using Anthropic MAX plan OAuth tokens with flat-rate billing",
+  "description": "HTTP proxy router for using Anthropic MAX Plan (flat-rate billing) with any AI tool",
   "main": "dist/index.js",
   "type": "module",
+  "bin": {
+    "anthropic-max-router": "./src/router/server.ts",
+    "max-router": "./src/router/server.ts"
+  },
   "scripts": {
     "start": "tsx src/cli.ts",
     "router": "tsx src/router/server.ts"
@@ -13,9 +17,12 @@
     "claude",
     "oauth",
     "max-plan",
+    "router",
+    "proxy",
     "flat-rate",
     "ai",
-    "coding-assistant"
+    "coding-assistant",
+    "api-proxy"
   ],
   "author": "nsxdavid (David Whatley) <https://davidwhatley.com>",
   "license": "MIT",

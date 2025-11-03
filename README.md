@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![Status](https://img.shields.io/badge/Status-Verified%20Working-brightgreen.svg)](https://github.com/nsxdavid/anthropic-oauth-max-plan)
+[![Status](https://img.shields.io/badge/Status-Verified%20Working-brightgreen.svg)](https://github.com/nsxdavid/anthropic-max-router)
 
 </div>
 
@@ -61,14 +61,30 @@ This repository provides **both practical tools and complete documentation** for
 
 ## Quick Start
 
+### Option 1: Run Directly with npx (No Install)
+
 ```bash
-# Install dependencies
+# Run the router directly from GitHub
+npx github:nsxdavid/anthropic-max-router
+
+# With options
+npx github:nsxdavid/anthropic-max-router --help
+npx github:nsxdavid/anthropic-max-router --port 8080
+npx github:nsxdavid/anthropic-max-router --verbose
+```
+
+### Option 2: Clone and Run
+
+```bash
+# Clone the repository
+git clone https://github.com/nsxdavid/anthropic-max-router
+cd anthropic-max-router
 npm install
 
-# Run the router (for production use)
+# Run the router
 npm run router
 
-# OR run the interactive CLI (for testing/learning)
+# OR run the interactive CLI
 npm start
 ```
 
@@ -369,7 +385,7 @@ Delete `.oauth-tokens.json` and restart. The application will prompt for re-auth
 ## Project Files
 
 ```
-anthropic-oauth-max-plan/
+anthropic-max-router/
 ├── src/
 │   ├── cli.ts                    # Interactive CLI application
 │   ├── oauth.ts                  # OAuth PKCE flow implementation

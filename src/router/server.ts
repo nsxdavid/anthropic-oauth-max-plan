@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import express, { Request, Response } from 'express';
 import readline from 'readline';
 import { getValidAccessToken, loadTokens, saveTokens } from '../token-manager.js';

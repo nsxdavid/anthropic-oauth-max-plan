@@ -27,17 +27,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Conditional system prompt injection logging
   - Error handling with detailed messages
 - **Health Check Endpoint** - `GET /health` for monitoring router status
+- **npx Support** - Can now run directly from GitHub without cloning
+  - Added `bin` field to package.json
+  - Added shebang to router server
+  - Supports both `anthropic-max-router` and `max-router` commands
+  - Run with: `npx github:nsxdavid/anthropic-max-router`
 - **Comprehensive Documentation**
   - Restructured README to equally highlight CLI, Router, and Implementation Guide
   - Complete command-line options documentation
-  - curl test examples
+  - PowerShell and Bash curl test examples
   - Use case examples (JavaScript, Python)
+  - API key usage clarification
+  - npx installation instructions
   - Troubleshooting guide
 
 ### Changed
+- **Repository renamed** from `anthropic-oauth-max-plan` to `anthropic-max-router`
+  - Package name updated to `anthropic-max-router`
+  - Better reflects that router is now the main feature
+  - GitHub will auto-redirect old URLs
 - README restructured to highlight both educational purpose and practical router application
 - Documentation now emphasizes router as main feature while maintaining educational focus
 - Improved project structure organization with router as separate application
+- Updated description to better reflect router functionality
 
 ### Fixed
 - TypeScript compilation error in client.ts with unknown type casting
