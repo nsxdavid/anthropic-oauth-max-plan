@@ -105,16 +105,16 @@ const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
 const ANTHROPIC_BETA = 'oauth-2025-04-20,claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14';
 
-// Parse JSON request bodies
-app.use(express.json());
+// Parse JSON request bodies with increased limit for large payloads
+app.use(express.json({ limit: '50mb' }));
 
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', service: 'anthropic-max-plan-router' });
 });
 
-// Main proxy endpoint
-app.post('/v1/messages', async (req: Request, res: Response) => {
+// Shared handler for /v1/messages endpoint
+const handleMessagesRequest = async (req: Request, res: Response) => {
   const requestId = Math.random().toString(36).substring(7);
   const timestamp = new Date().toISOString();
 
@@ -186,7 +186,13 @@ app.post('/v1/messages', async (req: Request, res: Response) => {
       }
     });
   }
-});
+};
+
+// Main proxy endpoint
+app.post('/v1/messages', handleMessagesRequest);
+
+// Route alias to handle Stagehand v3 SDK bug that doubles the /v1 prefix
+app.post('/v1/v1/messages', handleMessagesRequest);
 
 // Startup sequence
 async function startRouter() {
