@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "anthropic-max-router": "./dist/router/server.js",
-    "max-router": "./dist/router/server.js"
+    "anthropic-max-router": "dist/router/server.js",
+    "max-router": "dist/router/server.js"
   },
   "scripts": {
     "start": "tsx src/cli.ts",
