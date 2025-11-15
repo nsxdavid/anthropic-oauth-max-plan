@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.1] - 2025-11-15
+
+### Fixed
+- **System prompt handling** - Fixed crash when system prompt is a string instead of array
+  - Added `normalizeSystemPrompt()` function in middleware to handle both string and array formats
+  - Prevents "TypeError: system.map is not a function" error
+  - Thanks to @geoh for the contribution (PR #1)
+- **PORT variable initialization** - Fixed reference error where PORT was used before initialization
+  - Moved PORT declaration before parseArgs() call to ensure proper initialization order
+  - Thanks to @geoh for the contribution (PR #1)
+
 ## [1.2.0] - 2025-11-15
 
 ### Added
